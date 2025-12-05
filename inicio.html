@@ -1,0 +1,153 @@
+# ============================================
+#            CLASE BASE: PERSONA
+# ============================================
+
+class Persona:
+    def __init__(self, nombre, edad, documento):
+        self.nombre = nombre
+        self.edad = edad
+        self.documento = documento
+
+    def presentarse(self):
+        print(f"Nombre: {self.nombre} | Edad: {self.edad} | Doc: {self.documento}")
+
+
+# ============================================
+#       CLASE PACIENTE (HEREDA PERSONA)
+# ============================================
+
+class Paciente(Persona):
+    def __init__(self, nombre, edad, documento, historial_clinico="Sin registrar"):
+        super().__init__(nombre, edad, documento)
+        self._habitacion = None              # protegido
+        self.__historial_clinico = historial_clinico  # privado
+
+    def asignar_habitacion(self, habitacion):
+        self._habitacion = habitacion
+
+    def ver_habitacion(self):
+        return self._habitacion
+
+    def ver_historial(self):
+        return self.__historial_clinico
+
+
+# ============================================
+#         CLASE EMPLEADO DEL HOSPITAL
+# ============================================
+
+class Empleado(Persona):
+    def __init__(self, nombre, edad, documento, salario):
+        super().__init__(nombre, edad, documento)
+        self.salario = salario
+
+    def trabajar(self):
+        print(f"{self.nombre} está trabajando...")
+
+
+# ============================================
+#            MÉDICO (HEREDA EMPLEADO)
+# ============================================
+
+class Medico(Empleado):
+    def __init__(self, nombre, edad, documento, salario, especialidad):
+        super().__init__(nombre, edad, documento, salario)
+        self.especialidad = especialidad
+
+    def diagnosticar(self, paciente):
+        print(f"{self.nombre} diagnostica al paciente {paciente.nombre}")
+
+
+# ============================================
+#          ENFERMERO (HEREDA EMPLEADO)
+# ============================================
+
+class Enfermero(Empleado):
+    def __init__(self, nombre, edad, documento, salario, turno):
+        super().__init__(nombre, edad, documento, salario)
+        self.turno = turno
+
+    def atender(self, paciente):
+        print(f"{self.nombre} atiende al paciente {paciente.nombre}")
+
+
+# ============================================
+#             CLASE HABITACIÓN
+# ============================================
+
+class Habitacion:
+    def __init__(self, numero, tipo):
+        self.numero = numero
+        self.tipo = tipo
+        self.ocupada = False
+
+    def ocupar(self):
+        self.ocupada = True
+
+    def liberar(self):
+        self.ocupada = False
+
+
+# ============================================
+#              HOSPITAL (ADMIN)
+# ============================================
+
+class Hospital:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.pacientes = []
+        self.empleados = []
+        self.habitaciones = []
+
+    def agregar_paciente(self, paciente):
+        self.pacientes.append(paciente)
+
+    def agregar_empleado(self, empleado):
+        self.empleados.append(empleado)
+
+    def agregar_habitacion(self, habitacion):
+        self.habitaciones.append(habitacion)
+
+    def listar_pacientes(self):
+        print("\n--- PACIENTES ---")
+        for p in self.pacientes:
+            p.presentarse()
+
+    def listar_empleados(self):
+        print("\n--- EMPLEADOS ---")
+        for e in self.empleados:
+            e.presentarse()
+
+    def listar_habitaciones(self):
+        print("\n--- HABITACIONES ---")
+        for h in self.habitaciones:
+            print(f"Habitación {h.numero} | Tipo: {h.tipo} | Ocupada: {h.ocupada}")
+
+
+# ============================================
+#         PRUEBA RÁPIDA DEL SISTEMA
+# ============================================
+
+pac1 = Paciente("Ana Torres", 30, "1002331122")
+med1 = Medico("Carlos Pérez", 45, "32212233", 5000000, "Cardiología")
+enf1 = Enfermero("Laura López", 33, "90012211", 2500000, "Noche")
+
+hab1 = Habitacion(101, "Individual")
+hab2 = Habitacion(102, "UCI")
+
+hospi = Hospital("Hospital Central")
+hospi.agregar_paciente(pac1)
+hospi.agregar_empleado(med1)
+hospi.agregar_empleado(enf1)
+hospi.agregar_habitacion(hab1)
+hospi.agregar_habitacion(hab2)
+
+pac1.asignar_habitacion(hab1)
+hab1.ocupar()
+
+hospi.listar_pacientes()
+hospi.listar_empleados()
+hospi.listar_habitaciones()
+
+med1.diagnosticar(pac1)
+enf1.atender(pac1)
